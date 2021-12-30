@@ -7,6 +7,8 @@ const simplex = new SimplexNoise('seed');
 
 const w = 600;
 const h = 600;
+let initradius = 0.5;
+let spikiness = 0.25;
 
 const canvas = document.createElement('canvas');
 
@@ -24,6 +26,8 @@ const f = (x) => Math.max(0.0, Math.min(255.0, Math.floor(x * 255.0)));
 const createShape = function (ws, hs) {
   const colors = {};
   const seed = new Date().getTime();
+  initradius = Math.random() * 0.5;
+  spikiness = Math.random() * 1.0;
   for (let x = 0; x < ws; x++) {
     for (let y = 0; y < hs; y++) {
       const dx = x - 0.5 * ws;
@@ -38,8 +42,8 @@ const createShape = function (ws, hs) {
       const nangle = angle / Math.PI / 2.0;
       const c = 1.0;
       const vradius2 = lerp(
-        (0.0 + 2.0 * Math.abs(simplex.noise2D(c * angle, seed))) * radius,
-        (0.0 + 2.0 * Math.abs(simplex.noise2D(c * -angle, seed))) * radius,
+        (initradius + spikiness * Math.abs(simplex.noise2D(c * angle, seed))) * radius,
+        (initradius + spikiness * Math.abs(simplex.noise2D(c * -angle, seed))) * radius,
         nangle
       );
       const currentRadius = Math.sqrt(dx * dx + dy * dy);
@@ -136,7 +140,7 @@ const drawCircle = function (basecolor, maxi, circle, shapesize) {
 
 const drawCanopy = function () {
   const shapesize = 50;
-  const step = 25;
+  const step = 20;
 
   const basecolor = {
     r: Math.random(),
@@ -180,6 +184,6 @@ const drawCanvas = function () {
   //createShape();
 };
 
-//drawCanvas();
+// drawCanvas();
 drawCanopy();
 ctx.putImageData(data, 0, 0);
